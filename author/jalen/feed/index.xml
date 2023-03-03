@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>, Author at Jalen Profile page</title>
+	<atom:link href="./index.html" rel="self" type="application/rss+xml" />
+	<link>./../../../index.html</link>
+	<description></description>
+	<lastBuildDate>Sun, 22 Jan 2023 20:43:12 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=6.1.1</generator>
+	<item>
+		<title>System Design – Simple Newsletter with REST API in Amazon API Gateway, SNS, Python, Lambda function, SES, DynamoDB ( Part-1 )</title>
+		<link>./../../../2022/12/24/system-design-simple-newsletter-with-aws/index.html?utm_source=rss#038;utm_medium=rss&#038;utm_campaign=system-design-simple-newsletter-with-aws</link>
+					<comments>./../../../2022/12/24/system-design-simple-newsletter-with-aws/index.html#respond</comments>
+		
+		<dc:creator><![CDATA[jalen]]></dc:creator>
+		<pubDate>Sat, 24 Dec 2022 05:26:44 +0000</pubDate>
+				<category><![CDATA[System Design]]></category>
+		<guid isPermaLink="false">./../../../index.html?p=263</guid>
+
+					<description><![CDATA[<p>During the pandemic, E-commerce becomes the most important role in business. It is redefining commercial activities around the globe. With couple of benefits brought from E-commerce, it lowers the operation costs for setting up the online platform, making it easy for entrepreneurs to start an online store with modern, user-friendly websites to take payments and</p>
+<div class="more-link">
+				 <a href="./../../../2022/12/24/system-design-simple-newsletter-with-aws/index.html" class="link-btn theme-btn"><span>Read More </span> <i class="fa fa-caret-right"></i></a>
+			</div>
+The post <a href="./../../../2022/12/24/system-design-simple-newsletter-with-aws/index.html">System Design – Simple Newsletter with REST API in Amazon API Gateway, SNS, Python, Lambda function, SES, DynamoDB ( Part-1 )</a> appeared first on <a href="./../../../index.html">Jalen Profile page</a>.]]></description>
+										<content:encoded><![CDATA[<p>During the pandemic, E-commerce becomes the most important role in business. It is redefining commercial activities around the globe. With couple of benefits brought from E-commerce, it lowers the operation costs for setting up the online platform, making it easy for entrepreneurs to start an online store with modern, user-friendly websites to take payments and manage inventory and shipping. </p>
+
+
+
+<p></p>
+
+
+
+<p>One of the amazing parts of those E-commerce websites is they all have a common strategy &#8211; <strong>Newsletter</strong>. I looked it up and below is the general definition of newsletter.</p>
+
+
+
+<blockquote class="wp-block-quote">
+<p>A newsletter is a tool used by businesses and organizations to share relevant and valuable information with their network of customers, prospects and subscribers. Newsletters give you direct access to your audience’s inbox, allowing you to share engaging content, promote sales and drive traffic to your website.</p>
+
+
+
+<p>Additionally, email campaigns are also easy to measure, which means you can track your progress and make meaningful adjustments that lead to more wins.</p>
+<cite>https://www.brafton.com/what-is-a-newsletter/</cite></blockquote>
+
+
+
+<p class="has-text-align-left">For such a dominant and comprehensive tool in digital marketing, newsletter helps your business to build long-term relationships with your customers, give you a low-risk and high-reward strategy to promote your business products, and enhance your analytics. So&#8230; after reading a bit about Serverless architecture, I came up with an idea and decided to build a simple <strong>Newsletter</strong> system.</p>
+
+
+
+<p>The overall system design is shown below:</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="797" height="1024" src="./../../../wp-content/uploads/2022/12/Newsletter-1-797x1024.jpg" alt="" class="wp-image-285" srcset="./../../../wp-content/uploads/2022/12/Newsletter-1-797x1024.jpg 797w, ./../../../wp-content/uploads/2022/12/Newsletter-1-234x300.jpg 234w, ./../../../wp-content/uploads/2022/12/Newsletter-1-768x986.jpg 768w" sizes="(max-width: 797px) 100vw, 797px" /></figure>
+
+
+
+<p>As I said, it is a simple <strong>Newsletter</strong> system which means it will never be as good as the existing products in marketing. For this project, all the services I am running are in AWS. In this article, we will focus on the first part of my design diagram,</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="631" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-9.53.20-PM-1024x631.png" alt="" class="wp-image-267" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-9.53.20-PM-1024x631.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-9.53.20-PM-300x185.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-9.53.20-PM-768x474.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-9.53.20-PM-1536x947.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-9.53.20-PM-2048x1263.png 2048w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p>Basically, as the diagram said, a customer/subscriber visits the website, and submits their information (username, email) to the organization in order to get the latest notification. The API Gateway will trigger the Lambda function to store user data into DynamoDB table and then send a confirmation email to the subscriber automatically.</p>
+
+
+
+<p></p>
+
+
+
+<p>In order to set up the project, you need to purchase a domain in Route53 or from GoDaddy, NameCheap etc. </p>
+
+
+
+<p>The first step is to create a Lambda function. After creating a lambda function, remember to update the execution policy. You need to add the Lambda function to the permission to perform certain actions in SES and DynamoDB. For my case, I just make it simple with the following policy. Of course in real world, we will set a fine-grained policy:</p>
+
+
+
+<p>For DynamoDB-policy, </p>
+
+
+
+<pre class="wp-block-code"><code>{
+    "Version": "2012-10-17",
+    "Statement": &#91;
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": &#91;
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:UpdateItem"
+            ],
+            "Resource": "arn:aws:dynamodb:us-east-1:954649680543:table/clientinfo"
+        }
+    ]
+}</code></pre>
+
+
+
+<p>For SES-policy,</p>
+
+
+
+<pre class="wp-block-code"><code>{
+    "Version": "2012-10-17",
+    "Statement": &#91;
+        {
+            "Effect": "Allow",
+            "Action": &#91;
+                "ses:SendEmail",
+                "ses:SendRawEmail"
+            ],
+            "Resource": "*"
+        }
+    ]
+}</code></pre>
+
+
+
+<p>For step 2, we go API Gateway and create a REST API, we need to create a POST method. Remember to select your Lambda function for the integration type and <strong>Enable CORS</strong>&nbsp;from the&nbsp;<strong>Action</strong>&nbsp;dropdown menu. Then, go back to the <strong>Actions </strong>dropdown list and Deploy API. Give the stage a name and then deploy. The invoke URL will be the endpoint for a web app to trigger the Lambda function.</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="584" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.10-PM-1024x584.png" alt="" class="wp-image-270" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.10-PM-1024x584.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.10-PM-300x171.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.10-PM-768x438.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.10-PM-1536x877.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.10-PM.png 1766w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="498" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.32-PM-1024x498.png" alt="" class="wp-image-271" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.32-PM-1024x498.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.32-PM-300x146.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.32-PM-768x374.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.32-PM-1536x748.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.32-PM-2048x997.png 2048w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p></p>
+
+
+
+<p>After setting up the API gateway, we need to create an identity in Amazon Simple Email Service (SES). You need to verify your domain first. After that, you will create an email address under your domain. The steps are quite tedious and if you want to know, you can check the link below for the instruction from Greg Farrow. He has a great explanation and instructions for you.</p>
+
+
+
+<p><strong>Easily Create Email Addresses for your Route53 Custom Domain:</strong></p>
+
+
+
+<p><a href="https://levelup.gitconnected.com/easily-create-email-addresses-for-your-route53-custom-domain-589d099dd0f2" data-type="URL" data-id="https://levelup.gitconnected.com/easily-create-email-addresses-for-your-route53-custom-domain-589d099dd0f2" target="_blank" rel="noreferrer noopener">https://levelup.gitconnected.com/easily-create-email-addresses-for-your-route53-custom-domain-589d099dd0f2</a> </p>
+
+
+
+<p>Also, remember to add an MX record to Route53, you could follow the instruction from AWS doc.</p>
+
+
+
+<p><strong>Publishing an MX record for Amazon SES email receiving:</strong></p>
+
+
+
+<p><a href="https://docs.aws.amazon.com/ses/latest/dg/receiving-email-mx-record.html" target="_blank" rel="noreferrer noopener">https://docs.aws.amazon.com/ses/latest/dg/receiving-email-mx-record.html</a></p>
+
+
+
+<p>At the end, you will get your domain and customized email address verified.</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="294" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.58.45-PM-1024x294.png" alt="" class="wp-image-273" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.58.45-PM-1024x294.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.58.45-PM-300x86.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.58.45-PM-768x221.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.58.45-PM-1536x441.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.58.45-PM.png 1608w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p></p>
+
+
+
+<p>Alright! after setting up the API Gateway and SES, the most exciting part is the Lambda function. Before we start writing the code, we need to know about Serverless computing. Here is what AWS said:</p>
+
+
+
+<blockquote class="wp-block-quote">
+<p>Serverless computing&nbsp;allows you to build and run applications and services without thinking about servers. With serverless computing, your application still runs on servers, but all the server management is done by AWS. Using AWS and its Serverless Platform, you can build and deploy applications on cost-effective services that provide built-in application availability and flexible scaling capabilities. This lets you focus on your application code instead of worrying about provisioning, configuring, and managing servers. </p>
+
+
+
+<p>Serverless applications start with AWS Lambda, an event-driven compute service natively integrated with over 200 AWS services and software as a service (SaaS) applications.</p>
+</blockquote>
+
+
+
+<p>TLDR, code for everything</p>
+
+
+
+<p>The Lambda function is quite new to me and I need to write a bunch of code to make every building blocks work. But in the end, I get it through! You will be using AWS with boto3, the AWS SDK for Python. Boto3 makes it easy to integrate your Python application, library, or script with AWS services including Amazon S3, Amazon EC2, Amazon DynamoDB, and more.</p>
+
+
+
+<p></p>
+
+
+
+<p>So for the Lambda function, we have two major tasks. </p>
+
+
+
+<ol>
+<li>Put user info into the DynamoDB table</li>
+
+
+
+<li>Send users a confirmation email</li>
+</ol>
+
+
+
+<p>and here is my simple Lambda function,</p>
+
+
+
+<pre class="wp-block-code"><code># import the json utility package since we will be working with a JSON object
+import json
+# import the AWS SDK (for Python the package name is boto3)
+import boto3
+from datetime import datetime
+import uuid
+
+
+# create a DynamoDB object using the AWS SDK
+dynamodb = boto3.resource('dynamodb')
+# use the DynamoDB object to select our table
+table = dynamodb.Table('clientinfo')
+
+        
+def send_email(username, email):
+    ses_client = boto3.client("ses", region_name = "us-east-1")
+    CHARSET = "UTF-8"
+    response = ses_client.send_email(
+        Destination = {
+            "ToAddresses": &#91;
+                email,
+            ],
+        },
+        Message={
+            "Body" : {
+                "Text" : {
+                    "Data" : """We will send you the latest notification whenever updates!
+                    Good luck for your project!!""",
+                }
+            },
+            "Subject" : {
+                "Charset" : CHARSET,
+                "Data" : f"{username}! Thank you for your subscriptinon!",
+            },
+        },
+        Source = "no-reply@jalenbonds.com",
+        
+        )
+# define the handler function that the Lambda service will use as an entry point
+def lambda_handler(event, context):
+# write name and time to the DynamoDB table using the object we instantiated and save response in a variable
+    now = datetime.now()
+
+    time_format = now.strftime("%Y%m%d%H%M%S")
+    current_time = now.strftime("%Y:%m:%d:%H:%M:%S")
+    id = str(uuid.uuid4()).replace("-","")&#91;0:8]
+    real_uuid = time_format + id 
+    
+    email_list = &#91;]
+    response = table.scan(AttributesToGet=&#91;'email'])
+
+    result = response&#91;'Items']
+
+    for item in result:
+        email_list.append(item&#91;'email'])
+    
+    if event&#91;'email'] in email_list:
+        return {
+            'body': json.dumps('Your email has been in our list!')
+        }
+    else:
+        send_email(str(event&#91;'username']), str(event&#91;'email']))
+        
+        response = table.put_item(
+            Item={
+                'UUID' : real_uuid,
+                'username' : event&#91;'username'], 
+                'email' : event&#91;'email'],
+                'Time_Registered' : current_time
+                })
+    # return a properly formatted JSON object
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Thank you for your subscription!')
+        }
+
+</code></pre>
+
+
+
+<p>Let&#8217;s do a test, if you don&#8217;t not have a web app, you can click on &#8220;Test&#8221; and then configure a test event,</p>
+
+
+
+<p>In the event JSON, you can copy the below code(remember to replace the username and email values):</p>
+
+
+
+<pre class="wp-block-code"><code>{
+  "username": "DrinkWaterGuy",
+  "email": "distilledwaterwc@gmail.com"
+}</code></pre>
+
+
+
+<p>Then Click test and you will get the following execution result:</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="386" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.05.02-PM-1024x386.png" alt="" class="wp-image-274" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.05.02-PM-1024x386.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.05.02-PM-300x113.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.05.02-PM-768x290.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.05.02-PM-1536x580.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.05.02-PM.png 1606w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p>Now We go back to our mailbox and check if we receive the email!</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="415" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.06.01-PM-1024x415.png" alt="" class="wp-image-275" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.06.01-PM-1024x415.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.06.01-PM-300x121.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.06.01-PM-768x311.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.06.01-PM-1536x622.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.06.01-PM.png 1768w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p>Since I have a web app, I can input my data into it and test it!</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="354" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.07.31-PM-1024x354.png" alt="" class="wp-image-278" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.07.31-PM-1024x354.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.07.31-PM-300x104.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.07.31-PM-768x266.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.07.31-PM-1536x531.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.07.31-PM-2048x708.png 2048w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="354" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.08.18-PM-1024x354.png" alt="" class="wp-image-279" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.08.18-PM-1024x354.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.08.18-PM-300x104.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.08.18-PM-768x266.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.08.18-PM-1536x531.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.08.18-PM-2048x709.png 2048w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p></p>
+
+
+
+<p>Now, we check our mailbox again to see if my front end is working&#8230;</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="434" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.09.16-PM-1024x434.png" alt="" class="wp-image-280" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.09.16-PM-1024x434.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.09.16-PM-300x127.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.09.16-PM-768x325.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.09.16-PM-1536x650.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.09.16-PM.png 1762w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p>Ok,, the SES part works fine, how about the DynamoDB table&#8230;.</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="671" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.11.15-PM-1024x671.png" alt="" class="wp-image-281" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.11.15-PM-1024x671.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.11.15-PM-300x197.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.11.15-PM-768x503.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.11.15-PM.png 1514w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p>Here you go!!! Everything works!!! </p>
+
+
+
+<p>if you want to have a simple web page, you can copy the HTML code below and add your API Invoke URL on Line 41</p>
+
+
+
+<pre class="wp-block-code"><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Hello World&lt;/title&gt;
+    &lt;!-- Add some CSS to change client UI --&gt;
+    &lt;style&gt;
+    body {
+        background-color: #232F3E;
+        }
+    label, button {
+        color: #FF9900;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        margin-left: 40px;
+        }
+     input {
+        color: #232F3E;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        margin-left: 20px;
+        }
+    &lt;/style&gt;
+    &lt;script&gt;
+        // define the callAPI function that takes a first name and last name as parameters
+        var callAPI = (username, email)=&gt;{
+            // instantiate a headers object
+            var myHeaders = new Headers();
+            // add content type header to object
+            myHeaders.append("Content-Type", "application/json");
+            // using built in JSON utility package turn object to string and store in a variable
+            var raw = JSON.stringify({"firstName":firstName,"lastName":lastName});
+            // create a JSON object with parameters for API call and store in a variable
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: raw,
+                redirect: 'follow'
+            };
+            // make API call with parameters and use promises to get response
+            fetch("YOUR-API-INVOKE-URL", requestOptions)
+            .then(response =&gt; response.text())
+            .then(result =&gt; alert(JSON.parse(result).body))
+            .catch(error =&gt; console.log('error', error));
+        }
+    &lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form&gt;
+        &lt;label&gt;username :&lt;/label&gt;
+        &lt;input type="text" id="username"&gt;
+        &lt;label&gt;email :&lt;/label&gt;
+        &lt;input type="text" id="email"&gt;
+        &lt;!-- set button onClick method to call function we defined passing input values as parameters --&gt;
+        &lt;button type="button" onclick="callAPI(document.getElementById('username').value,document.getElementById('email').value)"&gt;Call API&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+
+
+<p>You may ask, what if I enter the same email again, will it also be proceeded? </p>
+
+
+
+<p>ummm, let&#8217;s try!</p>
+
+
+
+<figure class="wp-block-image size-large"><img decoding="async" width="1024" height="394" src="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.13.56-PM-1024x394.png" alt="" class="wp-image-283" srcset="./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.13.56-PM-1024x394.png 1024w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.13.56-PM-300x116.png 300w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.13.56-PM-768x296.png 768w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.13.56-PM-1536x592.png 1536w, ./../../../wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.13.56-PM-2048x789.png 2048w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure>
+
+
+
+<p>But what if the username are the same? </p>
+
+
+
+<p>For that situation, from the perspective of the marketing team, what I care about the most are the active email addresses that subscribers are using, the username does not really matter. After all, the username will be picked in the right order when I publish a notification email later. Code can resolve the issue.</p>
+
+
+
+<p></p>
+
+
+
+<p><span style="font-weight: 600;">Congratulation</span><strong>s</strong>! you finished the first part of the simple <strong>Newsletter </strong>system design! I would suggest you to take a deep breath and be ready for the next chapter! It will cover one more AWS service, Amazon Simple Notification Service (SNS), and modify the Lambda function.</p>
+
+
+
+<p></p>
+
+
+
+<HTML>
+<HEAD> <TITLE>Activity &#8211; Insert animated GIF to HTML</TITLE> </HEAD>
+<BODY>
+  <IMG SRC="https://media2.giphy.com/media/8SuKOupsVwBUGGButK/giphy.gif?cid=ecf05e473t1ynb32lez7qyrnyfdxlszeopnp6s4of8s8pmfp&#038;rid=giphy.gif&#038;ct=g">
+</BODY>
+</HTML>The post <a href="./../../../2022/12/24/system-design-simple-newsletter-with-aws/index.html">System Design – Simple Newsletter with REST API in Amazon API Gateway, SNS, Python, Lambda function, SES, DynamoDB ( Part-1 )</a> appeared first on <a href="./../../../index.html">Jalen Profile page</a>.]]></content:encoded>
+					
+					<wfw:commentRss>./../../../2022/12/24/system-design-simple-newsletter-with-aws/feed/index.html</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+			</item>
+	</channel>
+</rss>

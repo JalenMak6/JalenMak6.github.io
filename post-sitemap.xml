@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This sitemap was dynamically generated on February 28, 2023 at 9:38 pm by All in One SEO - the original SEO plugin for WordPress. -->
+
+<?xml-stylesheet type="text/xsl" href="./default.xsl?sitemap=post"?>
+<urlset
+	xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+	xmlns:xhtml="http://www.w3.org/1999/xhtml"
+	xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+>
+	<url>
+		<loc><![CDATA[./2022/12/24/system-design-simple-newsletter-with-aws/]]>/index.html</loc>
+		<lastmod><![CDATA[2023-01-22T20:43:12+00:00]]></lastmod>
+		<changefreq><![CDATA[weekly]]></changefreq>
+		<priority><![CDATA[0.7]]></priority>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Newsletter-1.jpg]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-9.53.20-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.10-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.33.32-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-10.58.45-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.05.02-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.06.01-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.07.31-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.08.18-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.09.16-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.11.15-PM.png]]></image:loc>
+		</image:image>
+		<image:image>
+			<image:loc><![CDATA[./wp-content/uploads/2022/12/Screen-Shot-2022-12-23-at-11.13.56-PM.png]]></image:loc>
+		</image:image>
+	</url>
+</urlset>
